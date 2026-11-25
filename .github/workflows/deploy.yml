@@ -27,7 +27,9 @@ jobs:
           local-dir: ./
           server-dir: ${{ vars.FTP_SERVER_DIR }}
           exclude: |
-            **/.git*
-            **/.github*
-            **/.gitignore
-            **/README.md
+            .git/**
+            .git
+            .github/**
+            .github
+            .gitignore
+            README.md
