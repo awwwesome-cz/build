@@ -2,19 +2,7 @@
 
 declare(strict_types=1);
 
-require __DIR__ . '/runner.php';
-
 header('Content-Type: text/plain; charset=utf-8');
-header('X-Accel-Buffering: no');
-
-@ini_set('output_buffering', 'off');
-@ini_set('zlib.output_compression', '0');
-@ini_set('max_execution_time', '0');
-
-while (ob_get_level() > 0) {
-    ob_end_flush();
-}
-ob_implicit_flush(true);
 
 $allowedStacks = ['laravel'];
 $rawStack = $_GET['stack'] ?? '';
@@ -74,8 +62,9 @@ $command = sprintf(
     escapeshellarg($config['pull_services'])
 );
 
-echo "Spouštím stack '{$rawStack}' pro aplikaci '{$appName}'\n\n";
-
-$exitCode = run_build_script($command, $baseDir);
-
-echo "\nUkončeno s návratovým kódem: {$exitCode}\n";
+echo "Stack:   {$rawStack}\n";
+echo "Aplikace: {$appName}\n";
+echo "Složka:  {$appDir}\n";
+echo "Služby:  {$config['services']} (PHP 8.5)\n\n";
+echo "Příkaz ke spuštění:\n";
+echo $command . "\n";
