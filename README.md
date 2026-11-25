@@ -1,6 +1,6 @@
-# Project Builder (`build.example.com`)
+# Project Builder (`build.awwwesome.cz`)
 
-Jednoduchý webový spouštěč pro generování projektů přes URL (např. `https://build.example.com/laravel/app-example`). Každý stack má vlastní konfiguraci i build skript ve složce `stacks/<stack>/`.
+Generátor instalačních bash skriptů dostupný přes URL (např. `https://build.awwwesome.cz/laravel/app-example`). Požadavek vrátí sestavený skript jako prostý text (`text/plain`), takže ho lze rovnou spustit v terminálu přes `curl -sL <URL> | bash`.
 
 ## Struktura projektu
 
@@ -8,9 +8,8 @@ Jednoduchý webový spouštěč pro generování projektů přes URL (např. `ht
 /
 ├── .htaccess
 ├── index.php
-├── runner.php
 ├── README.md
 └── stacks/
     └── laravel/
         ├── config.php
-        └── build.sh
+        └── template.sh

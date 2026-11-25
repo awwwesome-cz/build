@@ -10,61 +10,43 @@ $rawApp = $_GET['app'] ?? '';
 
 if (!in_array($rawStack, $allowedStacks, true)) {
     http_response_code(400);
-    echo "Neplatný nebo nepodporovaný stack.\n";
+    echo "# Chyba: neplatny stack\nexit 1\n";
     exit;
 }
 
 if (!preg_match('/^[a-zA-Z0-9_-]{1,64}$/', $rawApp)) {
     http_response_code(400);
-    echo "Neplatný název aplikace. Povoleny jsou pouze znaky [a-zA-Z0-9_-].\n";
+    echo "# Chyba: neplatny nazev aplikace\nexit 1\n";
     exit;
 }
 
-$stackConfigPath = __DIR__ . '/stacks/' . $rawStack . '/config.php';
-
-if (!is_file($stackConfigPath)) {
+$configPath = __DIR__ . '/stacks/' . $rawStack . '/config.php';
+if (!is_file($configPath)) {
     http_response_code(500);
-    echo "Chybí konfigurace pro stack: {$rawStack}\n";
+    echo "# Chyba: chybi konfigurace stacku\nexit 1\n";
     exit;
 }
 
-$config = require $stackConfigPath;
+$config = require $configPath;
 
-$appName = $rawApp;
-$baseDir = $config['base_dir'];
-$appDir = $baseDir . '/' . $appName;
-
-if (!is_dir($baseDir) && !mkdir($baseDir, 0775, true) && !is_dir($baseDir)) {
+if (!is_file($config['template'])) {
     http_response_code(500);
-    echo "Nepodařilo se vytvořit cílový adresář: {$baseDir}\n";
+    echo "# Chyba: chybi sablona skriptu\nexit 1\n";
     exit;
 }
 
-if (file_exists($appDir)) {
-    http_response_code(409);
-    echo "Složka '{$appName}' již existuje v {$baseDir}.\n";
-    exit;
-}
-
-if (!mkdir($appDir, 0775, true) && !is_dir($appDir)) {
+$script = file_get_contents($config['template']);
+if ($script === false) {
     http_response_code(500);
-    echo "Nepodařilo se vytvořit složku projektu: {$appDir}\n";
+    echo "# Chyba: nelze nacist sablonu\nexit 1\n";
     exit;
 }
 
-$command = sprintf(
-    '%s %s %s %s %s %s',
-    escapeshellarg($config['script']),
-    escapeshellarg($baseDir),
-    escapeshellarg($appName),
-    escapeshellarg($config['composer_image']),
-    escapeshellarg($config['services']),
-    escapeshellarg($config['pull_services'])
-);
+$output = strtr($script, [
+    '__APP_NAME__'       => $rawApp,
+    '__SERVICES__'       => $config['services'],
+    '__PULL_SERVICES__'  => $config['pull_services'],
+    '__COMPOSER_IMAGE__' => $config['composer_image'],
+]);
 
-echo "Stack:   {$rawStack}\n";
-echo "Aplikace: {$appName}\n";
-echo "Složka:  {$appDir}\n";
-echo "Služby:  {$config['services']} (PHP 8.5)\n\n";
-echo "Příkaz ke spuštění:\n";
-echo $command . "\n";
+echo $output;
