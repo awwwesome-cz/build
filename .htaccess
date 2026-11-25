@@ -1,0 +1,9 @@
+RewriteEngine On
+
+# Pokud požadovaný soubor nebo složka existuje, nech Apache ať ho obslouží přímo
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Zachytí /<stack>/<nazev-aplikace> (např. /laravel/app-example nebo /angular/app-example)
+RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/?$ index.php?stack=$1&app=$2 [QSA,L]
