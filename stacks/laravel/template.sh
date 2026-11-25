@@ -19,7 +19,7 @@ docker run --rm \
     -v "$(pwd)":/opt \
     -w /opt \
     "${COMPOSER_IMAGE}" \
-    bash -c "laravel new ${APP_NAME} --no-interaction && cd ${APP_NAME} && composer show laravel/sail 2>/dev/null || composer require laravel/sail --dev && php ./artisan sail:install --with=${SERVICES}"
+    bash -c "laravel new ${APP_NAME} --no-interaction && cd ${APP_NAME} && composer show laravel/sail 2>/dev/null \vert{}\vert{} composer require laravel/sail --dev && php ./artisan sail:install --with=${SERVICES}"
 
 cd "${APP_NAME}"
 
@@ -48,12 +48,12 @@ else
 fi
 
 if $SUDO -n true 2>/dev/null; then
-    $SUDO chown -R $USER: .
-    echo -e "${BOLD}Get started with:${NC} cd ${APP_NAME} && ./vendor/bin/sail up"
+    $SUDO chown -R$USER: .
+    echo -e "${BOLD}Get started with:${NC} cd${APP_NAME} && ./vendor/bin/sail up"
 else
     echo -e "${BOLD}Please provide your password so we can make some final adjustments to your application's permissions.${NC}"
     echo ""
-    $SUDO chown -R $USER: .
+    $SUDO chown -R$USER: .
     echo ""
-    echo -e "${BOLD}Thank you! We hope you build something incredible. Dive in with:${NC} cd ${APP_NAME} && ./vendor/bin/sail up"
+    echo -e "${BOLD}Thank you! We hope you build something incredible. Dive in with:${NC} cd${APP_NAME} && ./vendor/bin/sail up"
 fi
