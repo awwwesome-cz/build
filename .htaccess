@@ -4,4 +4,5 @@ RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
-RewriteRule ^laravel/([a-zA-Z0-9_-]+)/?$ index.php?stack=laravel&app=$1 [QSA,L]
+RewriteRule ^$ index.php [QSA,L]
+RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/?$ index.php?stack=$1&app=$2 [QSA,L]
