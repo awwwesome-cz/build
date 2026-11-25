@@ -1,0 +1,33 @@
+name: Test & FTP Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: PHP syntax check
+        run: find . -name "*.php" -not -path "./.git/*" -exec php -l {} +
+
+      - name: Shell syntax check
+        run: find . -name "*.sh" -not -path "./.git/*" -exec bash -n {} +
+
+      - name: FTP deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
+          port: ${{ vars.FTP_PORT || 21 }}
+          local-dir: ./
+          server-dir: ${{ vars.FTP_SERVER_DIR }}
+          exclude: |
+            **/.git*
+            **/.github*
+            **/.gitignore
+            **/README.md
